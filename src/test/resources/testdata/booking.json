@@ -1,0 +1,12 @@
+{
+  "_comment": "Valid booking test data — sourced from config, never hardcoded in test classes.",
+  "firstname": "Pooja",
+  "lastname": "Gupta",
+  "totalprice": 500,
+  "depositpaid": true,
+  "bookingdates": {
+    "checkin": "2026-01-01",
+    "checkout": "2026-01-10"
+  },
+  "additionalneeds": "Breakfast"
+}

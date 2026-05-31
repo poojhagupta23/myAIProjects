@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Logback configuration for test execution.
+  Outputs structured logs to console and a rolling file.
+-->
+<configuration>
+
+    <!-- Console appender with readable pattern -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level [%logger{36}] — %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Rolling file appender — logs stored in test-output/logs/ -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>test-output/logs/automation.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>test-output/logs/automation-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%logger{36}] — %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Root logger: INFO level, both appenders active -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </root>
+
+    <!-- Suppress RestAssured internal verbose logging in production runs -->
+    <logger name="io.restassured" level="WARN"/>
+
+</configuration>

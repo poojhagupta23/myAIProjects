@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- ─────────────────────────────────────────── -->
+    <!--            Project Coordinates              -->
+    <!-- ─────────────────────────────────────────── -->
+    <groupId>com.booker</groupId>
+    <artifactId>restful-booker-automation</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+
+    <name>Restful Booker API Automation Framework</name>
+    <description>
+        Enterprise-grade REST API automation framework built with RestAssured, Java, Maven, and TestNG.
+        Implements a 2-Layer API Object Model with Allure and ExtentReports dual reporting.
+    </description>
+
+    <!-- ─────────────────────────────────────────── -->
+    <!--         Centralized Version Control         -->
+    <!-- ─────────────────────────────────────────── -->
+    <properties>
+        <!-- Java version -->
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Dependency versions — all managed here, never hardcoded in deps -->
+        <rest-assured.version>5.3.2</rest-assured.version>
+        <testng.version>7.9.0</testng.version>
+        <allure.version>2.25.0</allure.version>
+        <allure.maven.version>2.12.0</allure.maven.version>
+        <extent.reports.version>5.1.1</extent.reports.version>
+        <jackson.version>2.16.0</jackson.version>
+        <slf4j.version>2.0.9</slf4j.version>
+        <logback.version>1.4.14</logback.version>
+        <aspectj.version>1.9.21</aspectj.version>
+        <maven.surefire.version>3.2.3</maven.surefire.version>
+        <maven.compiler.version>3.12.1</maven.compiler.version>
+    </properties>
+
+    <dependencies>
+
+        <!-- ─────────────────────────────────────── -->
+        <!--      REST-Assured — Core API Testing    -->
+        <!-- ─────────────────────────────────────── -->
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>${rest-assured.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- JSON Schema Validation support -->
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>json-schema-validator</artifactId>
+            <version>${rest-assured.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- ─────────────────────────────────────── -->
+        <!--       TestNG — Test Framework           -->
+        <!-- ─────────────────────────────────────── -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${testng.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- ─────────────────────────────────────── -->
+        <!--   Allure — Report Generation            -->
+        <!-- ─────────────────────────────────────── -->
+        <!-- Allure TestNG integration (annotations + lifecycle) -->
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-testng</artifactId>
+            <version>${allure.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Allure RestAssured filter for request/response logging in reports -->
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-rest-assured</artifactId>
+            <version>${allure.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- ─────────────────────────────────────── -->
+        <!--   ExtentReports — HTML Reporting        -->
+        <!-- ─────────────────────────────────────── -->
+        <dependency>
+            <groupId>com.aventstack</groupId>
+            <artifactId>extentreports</artifactId>
+            <version>${extent.reports.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- ─────────────────────────────────────── -->
+        <!--   Jackson — JSON Serialization          -->
+        <!-- ─────────────────────────────────────── -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- ─────────────────────────────────────── -->
+        <!--   Logging — SLF4J + Logback             -->
+        <!-- ─────────────────────────────────────── -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+
+            <!-- ─────────────────────────────────── -->
+            <!--   Maven Compiler Plugin             -->
+            <!-- ─────────────────────────────────── -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler.version}</version>
+                <configuration>
+                    <source>11</source>
+                    <target>11</target>
+                </configuration>
+            </plugin>
+
+            <!-- ─────────────────────────────────── -->
+            <!--   Maven Surefire — TestNG Runner    -->
+            <!--   AspectJ weaver enables Allure     -->
+            <!--   annotation-based instrumentation  -->
+            <!-- ─────────────────────────────────── -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven.surefire.version}</version>
+                <configuration>
+                    <!-- Point to testng.xml suite file -->
+                    <suiteXmlFiles>
+                        <suiteXmlFile>testng.xml</suiteXmlFile>
+                    </suiteXmlFiles>
+                    <!-- AspectJ weaver must run as a javaagent for Allure to intercept @Step, @Attachment -->
+                    <argLine>
+                        -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
+                    </argLine>
+                    <!-- Ensure test failures don't stop the build before reports are generated -->
+                    <testFailureIgnore>false</testFailureIgnore>
+                </configuration>
+                <dependencies>
+                    <!-- AspectJ weaver dependency for Surefire -->
+                    <dependency>
+                        <groupId>org.aspectj</groupId>
+                        <artifactId>aspectjweaver</artifactId>
+                        <version>${aspectj.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <!-- ─────────────────────────────────── -->
+            <!--   Allure Maven Plugin               -->
+            <!--   Usage: mvn allure:report          -->
+            <!-- ─────────────────────────────────── -->
+            <plugin>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-maven</artifactId>
+                <version>${allure.maven.version}</version>
+                <configuration>
+                    <reportVersion>${allure.version}</reportVersion>
+                </configuration>
+            </plugin>
+
+        </plugins>
+    </build>
+
+</project>
