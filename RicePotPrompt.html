@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RICE POT Prompt — Automation Framework</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #09090b;
+      --card-bg: rgba(24, 24, 27, 0.7);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text: #f4f4f5;
+      --text-muted: #a1a1aa;
+      --accent: #6366f1;
+      --accent-glow: rgba(99, 102, 241, 0.5);
+      
+      --r-color: #ef4444; /* Role */
+      --i-color: #f59e0b; /* Instructions */
+      --c-color: #10b981; /* Context */
+      --e-color: #3b82f6; /* Examples */
+      --p-color: #8b5cf6; /* Parameters */
+      --o-color: #ec4899; /* Output */
+      --t-color: #14b8a6; /* Tone */
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      background-image: 
+        radial-gradient(circle at 15% 50%, rgba(99, 102, 241, 0.12), transparent 25%),
+        radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.12), transparent 25%);
+      padding: 60px 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 60px;
+      animation: fadeInDown 0.8s ease-out;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 16px;
+      background: rgba(99, 102, 241, 0.15);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 100px;
+      color: #a5b4fc;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 48px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #fff 0%, #a1a1aa 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      font-size: 18px;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Guard Card */
+    .guard-card {
+      background: rgba(239, 68, 68, 0.05);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 40px;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      backdrop-filter: blur(12px);
+      animation: fadeInUp 0.6s ease-out 0.2s both;
+    }
+    
+    .guard-icon {
+      font-size: 32px;
+      line-height: 1;
+    }
+
+    .guard-content h3 {
+      color: #f87171;
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+
+    .guard-list {
+      list-style: none;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      font-size: 14px;
+    }
+
+    .guard-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    /* RICE POT Cards */
+    .rice-pot-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 32px;
+      backdrop-filter: blur(20px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 0.6s ease-out both;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; bottom: 0;
+      width: 4px;
+      background: var(--card-color);
+      box-shadow: 0 0 20px var(--card-color);
+    }
+
+    .card:hover {
+      transform: translateX(8px);
+      border-color: rgba(255,255,255,0.15);
+      background: rgba(30, 30, 35, 0.8);
+    }
+
+    /* Animation delays */
+    .card:nth-child(1) { animation-delay: 0.3s; --card-color: var(--r-color); }
+    .card:nth-child(2) { animation-delay: 0.4s; --card-color: var(--i-color); }
+    .card:nth-child(3) { animation-delay: 0.5s; --card-color: var(--c-color); }
+    .card:nth-child(4) { animation-delay: 0.6s; --card-color: var(--e-color); }
+    .card:nth-child(5) { animation-delay: 0.7s; --card-color: var(--p-color); }
+    .card:nth-child(6) { animation-delay: 0.8s; --card-color: var(--o-color); }
+    .card:nth-child(7) { animation-delay: 0.9s; --card-color: var(--t-color); }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .letter {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--card-color);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .card h2 {
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    .card p, .card ul {
+      color: var(--text-muted);
+      font-size: 16px;
+    }
+
+    .card ul {
+      margin-top: 12px;
+      padding-left: 20px;
+    }
+
+    .card li {
+      margin-bottom: 8px;
+    }
+    
+    .card li::marker {
+      color: var(--card-color);
+    }
+
+    code {
+      font-family: 'Fira Code', monospace;
+      background: rgba(255,255,255,0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+      color: #e2e8f0;
+    }
+
+    /* Keyframes */
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div class="badge">Original Prompt</div>
+      <h1>RICE POT Framework</h1>
+      <p class="subtitle">The exact architectural prompt used to engineer the Restful Booker API Automation Framework.</p>
+    </header>
+
+    <div class="guard-card">
+      <div class="guard-icon">⚠️</div>
+      <div class="guard-content">
+        <h3>Anti-Hallucination Guard</h3>
+        <ul class="guard-list">
+          <li><span>✅</span> <span><strong>DO:</strong> Use only provided API specs · Mark unknowns explicitly · Request clarification for gaps</span></li>
+          <li><span>❌</span> <span><strong>DO NOT:</strong> Assume root cause · Invent error messages · Guess system behavior · Fill gaps with assumptions</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="rice-pot-grid">
+      
+      <!-- Role -->
+      <div class="card">
+        <div class="card-header">
+          <div class="letter">R</div>
+          <h2>Role</h2>
+        </div>
+        <p>You are a <strong>Senior QA Automation Engineer</strong> with 5+ years of hands-on experience in:</p>
+        <ul>
+          <li>Automating backend REST APIs at enterprise scale</li>
+          <li>Designing production-ready test frameworks using RestAssured, Java, Maven, and TestNG</li>
+          <li>Applying Page Object Model (POM) patterns to API automation (API Object Model)</li>
+          <li>Writing zero-defect, zero-hardcoded, scalable automation code</li>
+        </ul>
+      </div>
+
+      <!-- Instructions -->
+      <div class="card">
+        <div class="card-header">
+          <div class="letter">I</div>
+          <h2>Instructions</h2>
+        </div>
+        <p>Act as the lead QA automation engineer and create a complete backend automation framework based on the following rules:</p>
+        <ul>
+          <li><strong>Architecture:</strong> Implement a 2-layer API Object Model (Layer 1: HTTP Client, Layer 2: Endpoints).</li>
+          <li><strong>Data Management:</strong> Zero hardcoding. Use <code>config.properties</code> for environment configs and <code>booking.json</code> for test data payloads.</li>
+          <li><strong>Models:</strong> Use Jackson POJOs with the Builder pattern for robust Request/Response serialization.</li>
+          <li><strong>Test Runner:</strong> Use TestNG exclusively (No JUnit annotations allowed).</li>
+          <li><strong>Reporting:</strong> Implement Dual Reporting (ExtentReports HTML + Allure TestNG) with thread-safety for parallel execution.</li>
+        </ul>
+      </div>
+
+      <!-- Context -->
+      <div class="card">
+        <div class="card-header">
+          <div class="letter">C</div>
+          <h2>Context</h2>
+        </div>
+        <p>You are automating the <strong>Restful Booker API</strong> (<code>https://restful-booker.herokuapp.com</code>). Specifically, you need to automate:</p>
+        <ul>
+          <li><code>POST /booking</code> (Create Booking)</li>
+          <li><code>GET /booking/{id}</code> (Retrieve Booking)</li>
+        </ul>
+        <p>The framework must include an End-to-End (E2E) flow connecting these endpoints, alongside rigorous positive and negative regression tests.</p>
+      </div>
+
+      <!-- Examples -->
+      <div class="card">
+        <div class="card-header">
+          <div class="letter">E</div>
+          <h2>Examples (Design Patterns)</h2>
+        </div>
+        <p>Follow enterprise design patterns for implementation:</p>
+        <ul>
+          <li>Use <strong>ThreadLocal</strong> in ReportUtils to ensure parallel test safety.</li>
+          <li>Use a <strong>Singleton</strong> pattern for initializing ExtentReports.</li>
+          <li>Apply a <strong>BaseTest</strong> class to handle global TestNG lifecycle hooks (<code>@BeforeSuite</code>, <code>@AfterSuite</code>).</li>
+        </ul>
+      </div>
+
+      <!-- Parameters -->
+      <div class="card">
+        <div class="card-header">
+          <div class="letter">P</div>
+          <h2>Parameters & Constraints</h2>
+        </div>
+        <ul>
+          <li>The project must be buildable out of the box using standard Maven commands (e.g., <code>mvn clean test</code>).</li>
+          <li>Code must be fully documented using JavaDoc for classes and methods.</li>
+          <li>Assertions must have clear, descriptive failure messages.</li>
+          <li>Must contain a minimum of 10 test cases covering positive, negative, boundary, and E2E scenarios.</li>
+        </ul>
+      </div>
+
+      <!-- Output -->
+      <div class="card">
+        <div class="card-header">
+          <div class="letter">O</div>
+          <h2>Output Format</h2>
+        </div>
+        <p>Deliver the output in a systematic, step-by-step manner:</p>
+        <ul>
+          <li><strong>Step 1:</strong> Provide a complete Implementation Plan outlining the file structure.</li>
+          <li><strong>Step 2:</strong> Generate the complete 21-file structure including <code>pom.xml</code>, properties, POJOs, Utilities, Clients, and Test classes.</li>
+          <li><strong>Step 3:</strong> Provide a comprehensive <code>README.md</code> and <code>DOCUMENTATION.md</code>.</li>
+        </ul>
+      </div>
+
+      <!-- Tone -->
+      <div class="card">
+        <div class="card-header">
+          <div class="letter">T</div>
+          <h2>Tone</h2>
+        </div>
+        <p>Maintain a <strong>professional, authoritative, and precise</strong> tone. Explain your architectural design decisions like a Lead Staff Engineer mentoring a team.</p>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>
